@@ -8,23 +8,40 @@ Ask your assistant about the passages you saved in [ReadAnyway](https://readanyw
 
 ## Connect Codex to ReadAnyway
 
-Start with the HTTPS MCP URL supplied for your ReadAnyway account. Replace the example address below with that URL. Codex connects directly to the remote service. If your operator supplied an OAuth client ID and fixed callback address, use the [pre-registered client setup](docs/hosting.md#connect-a-pre-registered-codex-client).
+Use your [ReadAnyway staging account](https://staging.readanyway.com/) for the hosted pilot. Staging has its own accounts and books. We tested **Codex CLI 0.170.0** from Clerk sign-in to opening a saved passage in the reader. Codex could read the selected book, could not retrieve the withheld book, and lost access after disconnect.
 
-```sh
-READANYWAY_MCP_URL='https://reader.example.org/api/mcp'
-codex mcp add readanyway --url "$READANYWAY_MCP_URL" --oauth-resource "$READANYWAY_MCP_URL"
+Add the following to `~/.codex/config.toml`. Place the two callback settings at the top level, before any `[table]` headers. If those keys already exist, update them in place. These global settings apply to other Codex MCP logins too.
+
+```toml
+mcp_oauth_callback_port = 43817
+mcp_oauth_callback_url = "http://127.0.0.1:43817/callback"
+
+[mcp_servers.readanyway-staging]
+url = "https://staging.readanyway.com/api/mcp"
+scopes = ["library:read", "highlights:read"]
+
+[mcp_servers.readanyway-staging.oauth]
+client_id = "TYCX8NjUXB9jz6sL"
 ```
 
-1. Follow the sign-in link and approve the requested permissions in Clerk. If your client needs a separate login, run `codex mcp login readanyway --scopes library:read,highlights:read`.
-2. In a Codex chat, ask **“List my shared books in ReadAnyway.”** On the first request, open the approval link from the tool. In **Connected apps**, pick the books to share or choose your whole library. Enable saved highlights if you want Codex to quote them.
-3. Ask again. Try **“Show me one saved highlight from the first book that has one.”** Open the returned link while signed in to ReadAnyway. When the current edition matches the saved location, **Continue reading here** takes you to the passage.
+The client ID is public and identifies Codex on staging. Codex discovers the OAuth resource from the server. Start the browser login from the terminal.
+
+```sh
+codex mcp login readanyway-staging --scopes library:read,highlights:read
+```
+
+1. Sign in to Clerk and approve the requested permissions for **Codex — ReadAnyway Staging**. Return to Codex when the browser finishes.
+2. In a new Codex chat, ask **“Use readanyway-staging to list my shared books.”** On the first data request, open the approval link from the tool. In **Connected apps**, pick the books to share or choose your whole library. Enable saved highlights if you want Codex to quote them.
+3. Ask again. Try **“Show me one saved highlight from the first book that has one.”** Open the returned link while signed in to staging. When the current edition matches the saved location, **Continue reading here** takes you to the passage.
+
+If Codex reports a missing issuer after browser consent, check `codex --version`. Version 0.144.5 lost the issuer from the callback in our test. Version 0.170.0 completed the same flow. [Upstream Codex issue](https://github.com/openai/codex/issues/33354) · [Configure your own host](docs/hosting.md#connect-a-pre-registered-codex-client)
 
 Change the selection or disconnect the assistant from your ReadAnyway account menu under **Connected apps**. Disconnecting stops future reads. An assistant can retain excerpts it has already received. The pilot requires fresh approval when the connector gets a replacement access token. [Codex MCP guide](https://developers.openai.com/codex/mcp/)
 
 <details>
 <summary>Connect Claude Code or another MCP client</summary>
 
-Use the same hosted URL with a client that supports Streamable HTTP and OAuth. For Claude Code, run the following command, then open `/mcp` to authenticate. [Claude Code MCP guide](https://code.claude.com/docs/en/mcp)
+The staging pilot has a registered client for Codex. For another client, use a host that supports its OAuth registration and replace the example URL below. For Claude Code, run the following command, then open `/mcp` to authenticate. [Claude Code MCP guide](https://code.claude.com/docs/en/mcp)
 
 ```sh
 claude mcp add --transport http readanyway https://reader.example.org/api/mcp
