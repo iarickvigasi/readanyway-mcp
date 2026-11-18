@@ -1,52 +1,113 @@
-# ReadAnyway MCP
+<a name="readanyway-mcp"></a>
 
-Ask your assistant about the passages you saved in [ReadAnyway](https://readanyway.com/). You choose which books it can see and whether it can read their highlights. Each result links back to your saved quote.
+# ![ReadAnyway MCP](docs/assets/readanyway-mcp.webp)
 
-> “Which of my highlights mention attention? Quote the passages exactly, group them by book, and give me a link to each one.”
+Remember a few words from a passage you highlighted? Ask your assistant to find the line and open it in [ReadAnyway](https://readanyway.com/). This read-only Model Context Protocol (MCP) server searches the books and saved highlights you choose to share.
 
-[Connect Codex](#connect-codex-to-readanyway) · [Try a local example](#try-a-local-example) · [Build your own server](docs/hosting.md) · [MIT license](LICENSE)
+[Connect Codex](#connect-codex-to-readanyway) · [Try the local demo](#try-the-local-demo) · [Example prompts](#what-to-ask) · [Tool reference](#available-tools)
 
 ## Connect Codex to ReadAnyway
 
-Use your [ReadAnyway staging account](https://staging.readanyway.com/) for the hosted pilot. Staging has its own accounts and books. We tested **Codex CLI 0.170.0** from Clerk sign-in to opening a saved passage in the reader. Codex could read the selected book, could not retrieve the withheld book, and lost access after disconnect.
+The hosted pilot works with **Codex CLI 0.170.0** and a [ReadAnyway staging account](https://staging.readanyway.com/). Staging has its own library. To follow along, use a book with at least one synced highlight.
 
-Add these two tables to `~/.codex/config.toml`. If you already configured `readanyway-staging`, update its existing entries. The callback settings apply only to this connection.
+1. **Add the server** to `~/.codex/config.toml`. Update the existing `readanyway-staging` entry if you have one.
 
-```toml
-[mcp_servers.readanyway-staging]
-url = "https://staging.readanyway.com/api/mcp"
-scopes = ["library:read", "highlights:read"]
+   <details>
+   <summary>Show the staging configuration</summary>
 
-[mcp_servers.readanyway-staging.oauth]
-client_id = "TYCX8NjUXB9jz6sL"
-callback_port = 43817
-callback_url = "http://127.0.0.1:43817/callback"
-```
+   ```toml
+   [mcp_servers.readanyway-staging]
+   url = "https://staging.readanyway.com/api/mcp"
+   scopes = ["library:read", "highlights:read"]
 
-The client ID is public and identifies Codex on staging. Codex discovers the OAuth resource from the server. Start the browser login from the terminal.
+   [mcp_servers.readanyway-staging.oauth]
+   client_id = "TYCX8NjUXB9jz6sL"
+   callback_port = 43817
+   callback_url = "http://127.0.0.1:43817/callback"
+   ```
 
-```sh
-codex mcp login readanyway-staging --scopes library:read,highlights:read
-```
+   </details>
 
-1. Sign in to Clerk and approve the requested permissions for **Codex — ReadAnyway Staging**. Return to Codex when the browser finishes.
-2. In a new Codex chat, ask **“Use readanyway-staging to list my shared books.”** On the first data request, open the approval link from the tool. In **Connected apps**, pick the books to share or choose your whole library. Enable saved highlights if you want Codex to quote them.
-3. Ask again. Try **“Show me one saved highlight from the first book that has one.”** Open the returned link while signed in to staging. When the current edition matches the saved location, **Continue reading here** takes you to the passage.
+2. **Sign in.** Run the command below. Clerk opens in your browser and shows the permissions requested by **Codex — ReadAnyway Staging**.
 
-If Codex reports a missing issuer after browser consent, check `codex --version`. Version 0.144.5 lost the issuer from the callback in our test. Version 0.170.0 completed the same flow. [Upstream Codex issue](https://github.com/openai/codex/issues/33354) · [Configure your own host](docs/hosting.md#connect-a-pre-registered-codex-client)
+   ```sh
+   codex mcp login readanyway-staging --scopes library:read,highlights:read
+   ```
 
-Change the selection or disconnect the assistant from your ReadAnyway account menu under **Connected apps**. Disconnecting stops future reads. An assistant can retain excerpts it has already received. The pilot requires fresh approval when the connector gets a replacement access token. [Codex MCP guide](https://developers.openai.com/codex/mcp/)
+3. **Choose your books.** After approving in Clerk, start a new Codex chat with this request.
+
+   ```text
+   Use readanyway-staging to list my shared books.
+   ```
+
+   The first request returns a sharing link. Open it, select the books you want to share, enable saved highlights, and click **Approve sharing**. You can also share your entire library.
+
+4. **Open a highlight.** Ask Codex to quote a highlight from one of those books and give you its link. Open the link while signed in to staging. **Continue reading here** takes you to the marked passage when its location still matches the current edition.
 
 <details>
-<summary>Connect Claude Code or another MCP client</summary>
+<summary>Seeing a “missing issuer” error after signing in?</summary>
 
-The staging pilot has a registered client for Codex. For another client, use a host that supports its OAuth registration and replace the example URL below. For Claude Code, run the following command, then open `/mcp` to authenticate. [Claude Code MCP guide](https://code.claude.com/docs/en/mcp)
+Check `codex --version`. Codex CLI 0.144.5 dropped Clerk’s issuer from the callback. The same sign-in passed on 0.170.0. Keep the callback settings under this server’s OAuth table as shown above. [Codex issue](https://github.com/openai/codex/issues/33354)
+
+</details>
+
+## What to ask
+
+| When you want to… | Try asking… |
+| --- | --- |
+| Find a half-remembered line | “Which of my highlights contain ‘shadow’? Quote each one and link me to the passage.” |
+| Compare two books | “Find two shared books where I highlighted the word ‘memory’. Compare how the authors use it and quote the lines you’re comparing.” |
+| Quiz yourself | “Pick a highlight from a book I shared. Hide the title and ask me who wrote it. After I guess, show me the book and the link.” |
+
+<a name="what-your-assistant-can-read"></a>
+
+## Available tools
+
+| Tool | Permission | What you can retrieve |
+| --- | --- | --- |
+| `list_books` | `library:read` | Shared books, including titles, authors, and IDs. Use `query` to match a title or author. |
+| `list_highlights` | `highlights:read` | Exact saved excerpts with book titles and citation links. Use `query` to match excerpt text or `book_id` to search one shared book. |
+
+Both tools read synced data. For another page, pass the returned `next_cursor` as `cursor` with the same filters. Each citation still opens the saved excerpt if its location in the book has changed.
+
+**You control sharing.** Open **Connected apps** in ReadAnyway to change the selection or disconnect Codex. Disconnecting stops future reads. Your assistant can retain passages it already received. In the staging pilot, a replacement access token requires fresh sharing approval.
+
+<a name="try-a-local-example"></a>
+
+## Try the local demo
+
+The demo comes with one fictional book, *The Orchard Notebook* by A. Reed. You can try both tools on your computer without a ReadAnyway account. With Node.js 22 or later and the Codex CLI installed, run these commands.
+
+```sh
+git clone https://github.com/iarickvigasi/readanyway-mcp.git
+cd readanyway-mcp
+npm ci
+npm run build
+codex mcp add readanyway-demo -- node "$PWD/examples/local-library.mjs"
+```
+
+Start a new Codex chat and ask **“Use readanyway-demo to find my highlight about a pear tree.”** Codex returns the line from the notebook.
+
+> I learned the pear tree by the shape of its shadow.
+
+The demo returns a placeholder citation on `example.org`. The hosted service opens your saved highlight in ReadAnyway. [Demo source](examples/local-library.mjs)
+
+<a name="use-the-typescript-package"></a>
+
+## Build with the package
+
+`@readanyway/mcp` exports `createReadAnywayServer` and a typed adapter for your books and highlights. It supports ES modules and CommonJS. Before the first npm release, run `npm pack` in the built checkout and install the resulting `.tgz` in your project. [Hosting guide](docs/hosting.md) · [Release guide](docs/releasing.md)
+
+<details>
+<summary>Connect Claude Code or a stdio client to your own host</summary>
+
+The staging client is registered for Codex. If your host supports your client’s OAuth flow, replace the example URL with your own MCP endpoint. For Claude Code, run this command and open `/mcp` to authenticate. [Claude Code MCP guide](https://code.claude.com/docs/en/mcp)
 
 ```sh
 claude mcp add --transport http readanyway https://reader.example.org/api/mcp
 ```
 
-For a client that launches local stdio processes, replace the example URL in this configuration. The bridge connects to the hosted service and handles browser sign-in.
+For a client that launches local stdio servers, add this HTTP bridge to its MCP configuration.
 
 ```json
 {
@@ -61,37 +122,4 @@ For a client that launches local stdio processes, replace the example URL in thi
 
 </details>
 
-## What your assistant can read
-
-| Tool              | Permission        | What it returns                                                                                                                         |
-| ----------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `list_books`      | `library:read`    | IDs, titles, and authors of shared books, including books without highlights. Optional `query` matches a title or author.               |
-| `list_highlights` | `highlights:read` | Exact saved excerpts, book titles, dates, and citation links. Use `book_id` to choose a shared book and `query` to search its excerpts. |
-
-Both tools read synced data. To continue a search, pass its `next_cursor` back as `cursor` with the same filters. A final page returns `null`. A citation still opens the saved quote when its original location in the book is unavailable.
-
-## Try a local example
-
-You can explore both tools with a fictional book before connecting a ReadAnyway account. Install Node.js 22 or later and the Codex CLI, then run:
-
-```sh
-git clone https://github.com/iarickvigasi/readanyway-mcp.git
-cd readanyway-mcp
-npm ci
-npm run build
-codex mcp add readanyway-demo -- node "$PWD/examples/local-library.mjs"
-```
-
-Open a Codex chat and ask **“Use readanyway-demo to find my highlight about a pear tree.”** The result includes _“I learned the pear tree by the shape of its shadow.”_ The demo uses a placeholder citation on `example.org`. Use a hosted account to open a real saved highlight. [Local example source](examples/local-library.mjs)
-
-## Use the TypeScript package
-
-`@readanyway/mcp` supplies the tool schemas and the MCP server factory. An adapter supplies the books and highlights. To install the package before its first npm release, build the archive in this checkout:
-
-```sh
-npm ci
-npm test
-npm pack
-```
-
-In your own project, install the resulting file with `npm install /path/to/readanyway-mcp-0.1.0.tgz`. The package includes TypeScript declarations and supports ES modules and CommonJS. [Hosting guide](docs/hosting.md) · [Release guide](docs/releasing.md) · [Report an issue](https://github.com/iarickvigasi/readanyway-mcp/issues)
+[MIT license](LICENSE) · [Report an issue](https://github.com/iarickvigasi/readanyway-mcp/issues) · [Build status](https://github.com/iarickvigasi/readanyway-mcp/actions/workflows/test.yml)
