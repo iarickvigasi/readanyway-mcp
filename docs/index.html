@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ReadAnyway MCP · Connect your reading library</title>
+  <meta name="description" content="Connect Codex or Claude to the books and highlights you choose to share from ReadAnyway. Ask for your next read and the passages behind the recommendation.">
+  <meta property="og:title" content="ReadAnyway MCP">
+  <meta property="og:description" content="Ask your assistant what to read next, using the passages you highlighted.">
+  <meta property="og:image" content="https://iarickvigasi.github.io/readanyway-mcp/assets/readanyway-mcp.webp">
+  <meta property="og:image:alt" content="ReadAnyway MCP with a highlighted passage from The Orchard Notebook">
+  <link rel="canonical" href="https://iarickvigasi.github.io/readanyway-mcp/">
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #faf7ef;
+      --ink: #203e43;
+      --muted: #496066;
+      --rule: #d3d2bf;
+      --serif: "Baskervville", Georgia, serif;
+      font-family: "Instrument Sans", system-ui, sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    main, footer { width: min(100% - 2.5rem, 66rem); margin-inline: auto; }
+    main { padding-top: clamp(1.25rem, 6vw, 5.5rem); }
+    h1 { margin: 0; }
+    h1 img { display: block; width: 100%; height: auto; }
+    .spread {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(2rem, 6vw, 5rem);
+      margin-block: clamp(2rem, 5vw, 4.5rem);
+      align-items: start;
+    }
+    h2 { font: 500 clamp(2.1rem, 4vw, 3.5rem)/1.13 var(--serif); margin: 0; letter-spacing: -.04em; }
+    p { font-size: 1.05rem; line-height: 1.65; margin: 1rem 0 1.6rem; max-width: 47ch; }
+    a { color: var(--ink); text-underline-offset: .22em; text-decoration-thickness: 1px; }
+    a:hover { text-decoration-thickness: 2px; }
+    a:focus-visible { outline: 3px solid #967321; outline-offset: 5px; }
+    .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1.4rem; }
+    .primary { display: inline-flex; align-items: center; gap: .65rem; padding: .75rem 1.2rem;
+      font-weight: 650; border-radius: .35rem; background: #214951; color: #fff; text-decoration: none; }
+    .primary:hover { background: #183940; }
+    figure { margin: 0; border-inline-start: 1px solid var(--rule); padding-inline-start: clamp(1.5rem, 3vw, 3rem); }
+    figcaption { color: var(--muted); margin-bottom: .8rem; font-size: .92rem; font-weight: 600; }
+    blockquote { margin: 0; max-width: 27ch; font: 400 clamp(1.5rem, 2.3vw, 2.1rem)/1.35 var(--serif); }
+    mark { background: #f2df9e; color: inherit; }
+    footer { padding-block: 1.2rem 2.5rem; border-top: 1px solid var(--rule); display: flex; gap: 1.4rem; font-size: .92rem; }
+    @media (max-width: 44rem) {
+      .spread { grid-template-columns: 1fr; }
+      figure { border-inline-start: 3px solid #ddc378; padding-inline-start: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1><img src="assets/readanyway-mcp.webp" width="1600" height="420" alt="ReadAnyway MCP. “I learned the pear tree by the shape of its shadow.” The Orchard Notebook by A. Reed."></h1>
+    <div class="spread">
+      <section aria-labelledby="connect">
+        <h2 id="connect">Connect your library</h2>
+        <p>Give Codex, Claude, or another MCP assistant read-only access to the books and highlights you choose to share.</p>
+        <div class="actions">
+          <a class="primary" href="https://readanyway.com/">Open ReadAnyway <span aria-hidden="true">↗</span></a>
+          <a href="https://github.com/iarickvigasi/readanyway-mcp#add-readanyway-to-your-assistant">Set up your assistant</a>
+        </div>
+      </section>
+      <figure>
+        <figcaption>Ask your assistant</figcaption>
+        <blockquote>“Based on my highlights, <mark>what should I read next?</mark> Show me the passages that made you pick it.”</blockquote>
+      </figure>
+    </div>
+  </main>
+  <footer>
+    <a href="https://github.com/iarickvigasi/readanyway-mcp">Source on GitHub</a>
+    <a href="https://github.com/iarickvigasi/readanyway-mcp/blob/main/LICENSE">MIT license</a>
+  </footer>
+</body>
+</html>

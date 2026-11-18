@@ -40,4 +40,4 @@ Change what you share or disconnect an assistant in [Connected apps](https://rea
 
 ## Build with the package
 
-Use the TypeScript server with your own book data, or try it with a fictional library on your computer. [Run the local demo](docs/hosting.md#try-the-local-demo) · [Host the tools](docs/hosting.md) · [Prepare a release](docs/releasing.md) · [MIT license](LICENSE)
+Use the TypeScript server with your own book data, or try it with a fictional library on your computer. [MCP project page](https://iarickvigasi.github.io/readanyway-mcp/) · [Run the local demo](docs/hosting.md#try-the-local-demo) · [Host the tools](docs/hosting.md) · [Prepare a release](docs/releasing.md) · [MIT license](LICENSE)
