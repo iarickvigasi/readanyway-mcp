@@ -2,7 +2,7 @@
 
 # ![ReadAnyway MCP](docs/assets/readanyway-mcp.webp)
 
-Remember a few words from a passage you highlighted? Ask your assistant to find the line and open it in [ReadAnyway](https://readanyway.com/). This read-only Model Context Protocol (MCP) server searches the books and saved highlights you choose to share.
+This first release gives your assistant read-only access to the books you choose to share. Ask it to gather all your highlights from those books. It can trace an idea across authors, turn your favorite passages into Markdown for your notes, or suggest what to read next based on what you underlined.
 
 [Connect Codex](#connect-codex-to-readanyway) · [Try the local demo](#try-the-local-demo) · [Example prompts](#what-to-ask) · [Tool reference](#available-tools)
 
