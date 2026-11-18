@@ -34,3 +34,25 @@ Highlight URLs should open an account-protected preview on your own site. Mark a
 The hosted ReadAnyway service uses Streamable HTTP at `/api/mcp`. Its HTTP layer advertises protected-resource metadata, accepts tokens for that exact resource, and verifies the requested scope. Clerk handles browser sign-in and OAuth consent. The separate first-party sharing page lets the signed-in reader choose books.
 
 When embedding the package, your host owns discovery, token verification, reader consent, and revocation. You can run the local stdio example with its fixed fictional dataset to develop the adapter before adding remote authorization. [MCP authorization specification](https://modelcontextprotocol.io/specification/latest/basic/authorization) · [MCP transports](https://modelcontextprotocol.io/specification/latest/basic/transports)
+
+## Connect a pre-registered Codex client
+
+If you administer a server with a pre-registered public OAuth client, give readers its client ID, MCP URL and exact loopback redirect URI. Register the client with PKCE and the two reader scopes.
+
+For example, an operator might register `http://127.0.0.1:38451/callback`. Set the matching top-level keys in your Codex `config.toml` before connecting. These callback settings apply across Codex MCP logins.
+
+```toml
+mcp_oauth_callback_port = 38451
+mcp_oauth_callback_url = "http://127.0.0.1:38451/callback"
+```
+
+Replace the example values below with your operator's values. Add the remote server, then request the reader scopes if prompted to log in separately.
+
+```sh
+MCP_URL='https://reader.example.org/api/mcp'
+CLIENT_ID='your-public-client-id'
+codex mcp add readanyway --url "$MCP_URL" --oauth-resource "$MCP_URL" --oauth-client-id "$CLIENT_ID"
+codex mcp login readanyway --scopes library:read,highlights:read
+```
+
+The public client ID identifies the assistant to the authorization server. The browser returns the one-time authorization code to the listening Codex process at the registered address. [Codex configuration reference](https://developers.openai.com/codex/config-reference)

@@ -8,14 +8,14 @@ Ask your assistant about the passages you saved in [ReadAnyway](https://readanyw
 
 ## Connect Codex to ReadAnyway
 
-Start with the HTTPS MCP URL supplied for your ReadAnyway account. Replace the example address below with that URL. Codex connects directly to the remote service.
+Start with the HTTPS MCP URL supplied for your ReadAnyway account. Replace the example address below with that URL. Codex connects directly to the remote service. If your operator supplied an OAuth client ID and fixed callback address, use the [pre-registered client setup](docs/hosting.md#connect-a-pre-registered-codex-client).
 
 ```sh
 READANYWAY_MCP_URL='https://reader.example.org/api/mcp'
 codex mcp add readanyway --url "$READANYWAY_MCP_URL" --oauth-resource "$READANYWAY_MCP_URL"
 ```
 
-1. Follow the sign-in link and approve the requested permissions in Clerk. If your client needs a separate login, run `codex mcp login readanyway --scopes library:read,highlights:read`. If your operator supplied an OAuth client ID, pass it to the add command with `--oauth-client-id`.
+1. Follow the sign-in link and approve the requested permissions in Clerk. If your client needs a separate login, run `codex mcp login readanyway --scopes library:read,highlights:read`.
 2. In a Codex chat, ask **“List my shared books in ReadAnyway.”** On the first request, open the approval link from the tool. In **Connected apps**, pick the books to share or choose your whole library. Enable saved highlights if you want Codex to quote them.
 3. Ask again. Try **“Show me one saved highlight from the first book that has one.”** Open the returned link while signed in to ReadAnyway. When the current edition matches the saved location, **Continue reading here** takes you to the passage.
 

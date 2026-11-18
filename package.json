@@ -32,10 +32,10 @@
     "node": ">=22"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json && npm run build:esm",
+    "build": "tsc -p tsconfig.json && node --run build:esm",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "npm run build && node --test test/*.test.mjs",
-    "prepack": "npm run build",
+    "test": "node --run build && node --test test/*.test.mjs",
+    "prepack": "node --run build",
     "build:esm": "tsc -p tsconfig.json --module ES2022 --moduleResolution bundler --outDir dist/esm && node -e \"require('node:fs').writeFileSync('dist/esm/package.json',JSON.stringify({type:'module'}))\""
   },
   "dependencies": {

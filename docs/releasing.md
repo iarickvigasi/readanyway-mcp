@@ -1,6 +1,6 @@
 # Prepare an npm release
 
-Use Node.js 22 or later and the package lockfile from this repository. From the repository root, run:
+Use Node.js 22 or later and the package lockfile in a checkout of the standalone [ReadAnyway MCP repository](https://github.com/iarickvigasi/readanyway-mcp). From its root, run:
 
 ```sh
 npm ci

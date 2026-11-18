@@ -15,5 +15,9 @@ jobs:
         with:
           node-version: 22
       - run: npm ci
-      - run: npm test
+      - name: Test with Node as the only executable on PATH
+        run: |
+          mkdir "$RUNNER_TEMP/node-only"
+          ln -s "$(command -v node)" "$RUNNER_TEMP/node-only/node"
+          PATH="$RUNNER_TEMP/node-only" node --run test
       - run: npm pack --dry-run
