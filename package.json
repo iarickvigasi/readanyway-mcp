@@ -1,0 +1,67 @@
+{
+  "name": "@readanyway/mcp",
+  "version": "0.1.0",
+  "description": "Read-only Model Context Protocol tools for a reader's books and saved highlights.",
+  "license": "MIT",
+  "type": "commonjs",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "test",
+    "tsconfig.json",
+    "LICENSE",
+    "README.md",
+    "examples",
+    "docs"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && npm run build:esm",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run build && node --test test/*.test.mjs",
+    "prepack": "npm run build",
+    "build:esm": "tsc -p tsconfig.json --module ES2022 --moduleResolution bundler --outDir dist/esm && node -e \"require('node:fs').writeFileSync('dist/esm/package.json',JSON.stringify({type:'module'}))\""
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.4.0",
+    "zod": "^4.2.0"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/client": "2.4.0",
+    "typescript": "5.9.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iarickvigasi/readanyway-mcp.git"
+  },
+  "homepage": "https://github.com/iarickvigasi/readanyway-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/iarickvigasi/readanyway-mcp/issues"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "readanyway",
+    "books",
+    "highlights"
+  ]
+}
