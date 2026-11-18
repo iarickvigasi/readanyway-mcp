@@ -10,6 +10,20 @@ flowchart LR
     D -->|Check current sharing and ownership| S[Your library]
 ```
 
+## Try the local demo
+
+With Node.js 22 or later and Codex CLI installed, clone the public repository and start the stdio example.
+
+```sh
+git clone https://github.com/iarickvigasi/readanyway-mcp.git
+cd readanyway-mcp
+npm ci
+npm run build
+codex mcp add readanyway-demo -- node "$PWD/examples/local-library.mjs"
+```
+
+In a new Codex chat, ask “Use readanyway-demo to find my highlight about a pear tree.” The demo returns “I learned the pear tree by the shape of its shadow.” Its citation is a placeholder on `example.org`.
+
 ## Bind the adapter to the reader
 
 Build a new MCP server for the authenticated request. Supply the scopes already verified by your HTTP service. Capture the reader and client identity in the adapter so tool arguments only specify search filters and pagination.
@@ -58,6 +72,6 @@ With this configuration, register `http://127.0.0.1:38451/callback` at your prov
 codex mcp login readanyway --scopes library:read,highlights:read
 ```
 
-Codex discovers the target resource through the server’s metadata. An explicit resource override produced two resource parameters and Clerk rejected the request with `invalid_target` in testing. The hosted example leaves this field unset. [Verified staging configuration](../README.md#connect-codex-to-readanyway)
+Codex discovers the target resource through the server’s metadata. An explicit resource override produced two resource parameters and Clerk rejected the request with `invalid_target` in testing. The hosted example leaves this field unset. [Connect to ReadAnyway](connect.md#codex)
 
 The public client ID identifies the assistant to the authorization server. The browser returns the one-time authorization code to the listening Codex process at the registered address. [Codex configuration reference](https://developers.openai.com/codex/config-reference)
