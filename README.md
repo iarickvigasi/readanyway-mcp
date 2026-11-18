@@ -2,7 +2,7 @@
 
 # ![ReadAnyway MCP](docs/assets/readanyway-mcp.webp)
 
-This first release gives your assistant read-only access to the books you choose to share. Ask it to gather all your highlights from those books. It can trace an idea across authors, turn your favorite passages into Markdown for your notes, or suggest what to read next based on what you underlined.
+Give your assistant read-only access to the books and highlights you choose to share from [ReadAnyway](https://readanyway.com/). Ask it to gather all the passages you’ve highlighted in [your library](https://readanyway.com/app/library). It can trace an idea across authors, turn your favorite passages into Markdown for your reading notes, or suggest what to read next based on what you underlined.
 
 <a name="connect-codex-to-readanyway"></a>
 
