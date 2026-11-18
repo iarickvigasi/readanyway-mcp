@@ -11,7 +11,7 @@ This first release gives your assistant read-only access to the books you choose
 Copy this link and paste it into Codex, Claude, or another assistant that supports MCP.
 
 ```text
-https://readanyway.com/mcp
+https://raw.githubusercontent.com/iarickvigasi/readanyway-mcp/main/docs/connect.md
 ```
 
 If your assistant asks what to do with the link, say “Connect my ReadAnyway library.” It can add the connection or show you where to click. You sign in and choose which books and highlights to share.
