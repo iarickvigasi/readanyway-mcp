@@ -1,24 +1,24 @@
 # Connect this assistant to ReadAnyway
 
-Use this guide when a reader asks to connect their ReadAnyway library. Set up only the client they are using. If the ReadAnyway tools are already available, go straight to **Verify book sharing**.
+Use this guide when a reader asks to connect their ReadAnyway library. Set up only the client they are using. If the tools are already available, check the configured URL against the instructions for this client. When it matches, go straight to **Verify book sharing**.
 
-| Setting | Value |
-| --- | --- |
-| Server name | `readanyway` |
-| Transport | Streamable HTTP |
-| Server URL | `https://readanyway.com/api/mcp` |
-| Authorization | OAuth authorization code with PKCE |
+| Setting            | Value                                |
+| ------------------ | ------------------------------------ |
+| Server name        | `readanyway`                         |
+| Transport          | Streamable HTTP                      |
+| Default server URL | `https://readanyway.com/api/mcp`     |
+| Authorization      | OAuth authorization code with PKCE   |
 | Reader permissions | `library:read` and `highlights:read` |
 
 The reader signs in through the browser flow opened by their MCP client. Their password, authorization code and tokens stay there. The public client IDs below identify the app to ReadAnyway.
 
 ## Codex
 
-Use Codex CLI 0.170.0 or a version that supports per-server OAuth callbacks and issuer verification. For a local Codex installation, add the two tables below to the reader’s Codex configuration, normally `~/.codex/config.toml`. If the entry already points to this server, reuse it. Keep unrelated settings and any differently configured server the reader already uses.
+Use Codex CLI 0.170.0 or a version that supports per-server OAuth callbacks and issuer verification. For a local Codex installation, add the two tables below to the reader’s Codex configuration, normally `~/.codex/config.toml`. For an existing ReadAnyway entry that uses the original URL, update its URL to the Codex endpoint below and start a fresh login. Keep unrelated settings and any differently configured server the reader already uses.
 
 ```toml
 [mcp_servers.readanyway]
-url = "https://readanyway.com/api/mcp"
+url = "https://readanyway.com/api/mcp/codex"
 scopes = ["library:read", "highlights:read"]
 
 [mcp_servers.readanyway.oauth]
@@ -27,7 +27,7 @@ callback_port = 43817
 callback_url = "http://127.0.0.1:43817/callback"
 ```
 
-Start the client’s browser login. Codex discovers the OAuth resource from the server.
+Start the client’s browser login. Choose books once for this connection. Codex keeps the selection as it renews access.
 
 ```sh
 codex mcp login readanyway --scopes library:read,highlights:read
@@ -62,9 +62,14 @@ For a desktop or terminal client that can launch local stdio tools, use the Read
     "readanyway": {
       "command": "npx",
       "args": [
-        "-y", "mcp-remote@0.16.6", "https://readanyway.com/api/mcp", "43819",
-        "--static-oauth-client-info", "{\"client_id\":\"AgYQKTbO4ABo8kcm\"}",
-        "--static-oauth-client-metadata", "{\"scope\":\"library:read highlights:read\",\"token_endpoint_auth_method\":\"none\"}"
+        "-y",
+        "mcp-remote@0.16.6",
+        "https://readanyway.com/api/mcp",
+        "43819",
+        "--static-oauth-client-info",
+        "{\"client_id\":\"AgYQKTbO4ABo8kcm\"}",
+        "--static-oauth-client-metadata",
+        "{\"scope\":\"library:read highlights:read\",\"token_endpoint_auth_method\":\"none\"}"
       ]
     }
   }
@@ -77,6 +82,6 @@ If the assistant has neither a remote connector nor a local tool launcher, offer
 
 1. Once the reader has approved the permissions in the browser, call `list_books`. If it returns a sharing link, show that exact link to the reader. They choose the books, enable saved highlights if desired, and select **Approve sharing**. Signing in alone leaves the library private.
 2. Call `list_books` again. A successful response can contain zero books. If the reader shares highlights, call `list_highlights` using a returned book’s `id` as `book_id`. Show the exact excerpt and citation. If the excerpt still has a location in this edition, **Continue reading here** opens the marked passage.
-3. For requests covering *all* books or highlights, follow each tool’s `next_cursor` as `cursor` with the same filters until it returns `null`. Reading, exporting to a file and sending email are separate actions. If the reader asks to send email, prepare the draft in their mail tool and get their confirmation of the recipients and message before sending.
+3. For requests covering _all_ books or highlights, follow each tool’s `next_cursor` as `cursor` with the same filters until it returns `null`. Reading, exporting to a file and sending email are separate actions. If the reader asks to send email, prepare the draft in their mail tool and get their confirmation of the recipients and message before sending.
 
-The reader can change book selection or disconnect any time in [Connected apps](https://readanyway.com/app/connected-apps). After a replacement access token, follow the new sharing link if the tool requests approval again.
+The reader can change book selection or disconnect any time in [Connected apps](https://readanyway.com/app/connected-apps). A fresh Codex login asks the reader to approve its own book selection. Other clients may request approval again after a token renewal.
