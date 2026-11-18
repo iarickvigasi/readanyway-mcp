@@ -37,23 +37,24 @@ When embedding the package, your host owns discovery, token verification, reader
 
 ## Connect a pre-registered Codex client
 
-If you administer a server with a pre-registered public OAuth client, give readers its client ID, MCP URL and loopback callback base. Enable PKCE, consent and the two reader scopes.
+If you administer a server with a pre-registered public OAuth client, enable PKCE and consent, allow the two reader scopes, and register the exact loopback callback URL. Give readers the client ID, MCP endpoint, and callback URL.
 
-Set the callback base in the top-level keys of your Codex `config.toml` before connecting. These settings apply across Codex MCP logins.
+Codex CLI 0.170.0 supports a callback configuration scoped to a single MCP server. Replace the example values and add these tables to your Codex `config.toml`.
 
 ```toml
-mcp_oauth_callback_port = 38451
-mcp_oauth_callback_url = "http://127.0.0.1:38451/callback"
+[mcp_servers.readanyway]
+url = "https://reader.example.org/api/mcp"
+scopes = ["library:read", "highlights:read"]
+
+[mcp_servers.readanyway.oauth]
+client_id = "your-public-client-id"
+callback_port = 38451
+callback_url = "http://127.0.0.1:38451/callback"
 ```
 
-Inspect the `redirect_uri` in the Codex authorization request and register that complete URI with your OAuth provider. Codex can append a stable ID derived from the MCP endpoint to the callback base. In callback-specific mode, `https://reader.example.org/api/mcp` produces `http://127.0.0.1:38451/callback/ONigv8-wL3vU` for the base above. In the tested staging setup, Codex 0.170.0 used `http://127.0.0.1:43817/callback/uLB-Wbi7ZC8Q`. Keep the plain callback base in Codex. [Codex callback implementation](https://github.com/openai/codex/blob/rust-v0.170.0/codex-rs/rmcp-client/src/oauth_callback.rs)
-
-Replace the example values below with your operator's values. Add the remote server, then request the reader scopes if prompted to log in separately.
+With this configuration, register `http://127.0.0.1:38451/callback` at your provider. Codex sends the configured callback URL. Then start the browser login.
 
 ```sh
-MCP_URL='https://reader.example.org/api/mcp'
-CLIENT_ID='your-public-client-id'
-codex mcp add readanyway --url "$MCP_URL" --oauth-client-id "$CLIENT_ID"
 codex mcp login readanyway --scopes library:read,highlights:read
 ```
 

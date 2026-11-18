@@ -10,18 +10,17 @@ Ask your assistant about the passages you saved in [ReadAnyway](https://readanyw
 
 Use your [ReadAnyway staging account](https://staging.readanyway.com/) for the hosted pilot. Staging has its own accounts and books. We tested **Codex CLI 0.170.0** from Clerk sign-in to opening a saved passage in the reader. Codex could read the selected book, could not retrieve the withheld book, and lost access after disconnect.
 
-Add the following to `~/.codex/config.toml`. Place the two callback settings at the top level, before any `[table]` headers. If those keys already exist, update them in place. These global settings apply to other Codex MCP logins too.
+Add these two tables to `~/.codex/config.toml`. If you already configured `readanyway-staging`, update its existing entries. The callback settings apply only to this connection.
 
 ```toml
-mcp_oauth_callback_port = 43817
-mcp_oauth_callback_url = "http://127.0.0.1:43817/callback"
-
 [mcp_servers.readanyway-staging]
 url = "https://staging.readanyway.com/api/mcp"
 scopes = ["library:read", "highlights:read"]
 
 [mcp_servers.readanyway-staging.oauth]
 client_id = "TYCX8NjUXB9jz6sL"
+callback_port = 43817
+callback_url = "http://127.0.0.1:43817/callback"
 ```
 
 The client ID is public and identifies Codex on staging. Codex discovers the OAuth resource from the server. Start the browser login from the terminal.
